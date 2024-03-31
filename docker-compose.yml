@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=3000
+      - DB_NAME=mailbox-size-leaderboard
+      - DB_HOST=mongo
+      - DB_PORT=27017
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

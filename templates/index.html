@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Mailbox Leaderboard</title>
+</head>
+<body style="padding: 2em; display: flex; justify-content: space-around;">
+    <div>
+        <h2>Mailbox Leaderboard</h2>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Mailbox Size</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div id="user-details">
+        <h3>Current User</h3>
+        <form id="edit-user-form">
+            <label for="edit-username">Username:</label>
+            <input type="text" id="edit-username" name="username"><br>
+            <label for="edit-mailbox-size">Mailbox Size:</label>
+            <input type="number" id="edit-mailbox-size" name="mailboxSize"><br>
+            <label for="edit-mailbox-unit">Mailbox Unit:</label>
+            <select id="edit-mailbox-unit" name="mailboxUnit">
+                <option value="MB">MB</option>
+                <option value="GB">GB</option>
+            </select><br>
+        </form>
+        <input type="button" id="update-button" class="secondary" value="Update">
+        <input type="button" id="logout-button" value="Log out" style="float: right;"/>
+        <div id="errorBox" style="display: none; color: darkred;"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            function convertToMB(size, unit) {
+                return unit.toUpperCase() === "GB" ? size * 1000 : size;
+            }
+
+            // Fetch leaderboard data
+            $.ajax({
+                url: '/api/users',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Convert all sizes to GB and sort by size
+                    const usersWithConvertedSizes = data.map(user => ({
+                        ...user,
+                        mailboxSizeInMB: convertToMB(user.mailboxSize, user.mailboxUnit)
+                    })).sort((a, b) => a.mailboxSizeInMB - b.mailboxSizeInMB);
+
+                    let tbody = $('#leaderboard tbody');
+                    $.each(usersWithConvertedSizes, function(i, user) {
+                        let row = $('<tr>').append(
+                            $('<td>').text(i+1),
+                            $('<td>').text(user.username),
+                            $('<td>').text(user.mailboxSizeInMB + " MB")
+                        );
+                        tbody.append(row);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching user data:', error);
+                }
+            });
+
+            $.ajax({
+                url: '/api/current-user',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#edit-username').val(data.username);
+                    $('#edit-mailbox-size').val(data.mailboxSize);
+                    $('#edit-mailbox-unit').val(data.mailboxUnit);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching current user data:', error);
+                }
+            });
+
+            $('#update-button').click(function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                let updatedData = {
+                    username: $('#edit-username').val(),
+                    mailboxSize: parseFloat($('#edit-mailbox-size').val()),
+                    mailboxUnit: $('#edit-mailbox-unit').val()
+                };
+
+                $.ajax({
+                    url: '/api/current-user',
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(updatedData),
+                    success: function(response) {
+                        alert('User updated successfully!');
+                        location.reload()
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating user:', error);
+                        alert('Failed to update user.');
+                    }
+                });
+            });
+
+            $('#logout-button').click(function() {
+                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                window.location.reload();
+            });
+        });
+    </script>
+</body>
+</html>

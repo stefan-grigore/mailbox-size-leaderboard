@@ -1,0 +1,87 @@
+/* Base styles for body to apply font consistently across the document */
+body {
+    font-family: Arial, sans-serif;
+    font-size: medium;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Centrally aligns and pads the container for the form */
+.container {
+    max-width: 600px;
+    margin: 0 auto; /* centers the container */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Margin at the bottom for spacing between sections or elements */
+.form-section {
+    margin-bottom: 40px;
+}
+
+/* Styling for headers within the form to keep a consistent color scheme */
+h2 {
+    color: #333;
+}
+
+/* Ensures the form elements are stacked vertically */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style for labels to provide consistent margin */
+label {
+    margin-bottom: 5px;
+}
+
+/* Uniform padding and margin for text and password inputs for a clean layout */
+input, select {
+    font-family: Arial, sans-serif;
+    font-size: medium;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Adds a subtle border */
+    border-radius: 4px; /* Optional: Rounds the corners of the input fields */
+}
+
+/* Styling for the submit button to match a blue color scheme */
+input[type="button"] {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px; /* Optional: Matches the input fields */
+}
+
+/* Hover effect for button to darken on mouse-over for feedback */
+input[type="button"]:hover {
+    background-color: #0056b3;
+}
+
+.secondary {
+    filter: grayscale(100%);
+    margin-left: auto;
+}
+
+table#leaderboard {
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+table#leaderboard, th, td {
+    border: 1px solid #ccc; /* Cell borders */
+}
+
+th, td {
+    padding: 8px; /* Padding inside cells */
+    text-align: left; /* Align text to the left */
+}
+
+thead {
+    background-color: #f9f9f9; /* Light grey background for the table header */
+}
+
